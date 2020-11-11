@@ -24,6 +24,7 @@ int tenthCTF();
 int eleventhCTF();
 int twelfthCTF();
 
+
 char *hashes[CTFS] = {"f959505ee0c9d7fb7d81a0904aa4e9f4", "244f7439f45f207f1eb89fb2344a4767", "d4daf850c3fcce947992440e3c17dd82", "53b04de7d6d99df86aa0289418f2b317", "ce0c1111d26e426e0ea7c1f58d5488fe", "752435d46843b72130c3b0b3bc1220d4", "d281db859d7ca31e15551150a10d20ad", "e09635a04dc73332ceb8f2488c7eea1a", "5473c71236bfb255256bc59958fb165a", "c2fb1566098f29ce6b5048fcd6aad77c", "869c4f21dcb4e24138d4a016ed000939", "fea087517c26fadd409bd4b9dc642555"};
 int (*challenges[CTFS])() = {firstCTF, secondCTF, thirdCTF, forthCTF, fifthCTF, sixthCTF, seventhCTF, eigthCTF, ninthCTF, tenthCTF, eleventhCTF, twelfthCTF};
 char *questions[CTFS] = {"¿Cómo descubrieron el protocolo, la dirección y el puerto para conectarse?", "¿Qué diferencias hay entre TCP y UDP y en qué casos conviene usar cada uno?", "¿El puerto que usaron para conectarse al server es el mismo que usan para mandar las respuestas? ¿Por qué?", "¿Qué útil abstracción es utilizada para comunicarse con sockets? ¿se puede utilizar read(2) y write(2) para operar?", "¿Cómo garantiza TCP que los paquetes llegan en orden y no se pierden?", "Un servidor suele crear un nuevo proceso o thread para atender las conexiones entrantes. ¿Qué conviene más?", "¿Cómo se puede implementar un servidor que atienda muchas conexiones sin usar procesos ni threads?", "¿Qué aplicaciones se pueden utilizar para ver el tráfico por la red?", "sockets es un mecanismo de IPC. ¿Qué es más eficiente entre sockets y pipes?", "¿Cuáles son las características del protocolo SCTP?", "¿Qué es un RFC?", "¿Fue divertido?"};
@@ -96,7 +97,7 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     FILE *res;
     sprintf(command, "echo -n \"%s\" | md5sum  | sed 's/  -//g'", givenAnswer);
     res = popen(command, "r");
-    int n = fread(result, sizeof(char), 1024, res);
+    fread(result, sizeof(char), 1024, res);
     pclose(res);
     if (strncmp(hash, result, MD5_LENGTH))
     {
@@ -208,6 +209,17 @@ int tenthCTF()
 {
     //FALTA LA LOGICA
     //SE PERDIO EN ALGUN PUSH O LO TIENE GASTI
+    char command[1024] = {0};
+    char result[1024] = {0};
+    FILE *res;
+    sprintf(command, "gcc ../quine.c -o quine && diff <(./quine) ../quine.c");
+    res = popen(command, "r");
+    int n = fread(result, sizeof(char), 1024, res);
+    pclose(res);
+    if(n == 0)
+        return 1;
+    result[n-1] = 0;
+    printf("%s",result);
     printf("quine\n");
     return 1;
 }
