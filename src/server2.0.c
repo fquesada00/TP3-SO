@@ -130,17 +130,16 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
 
 
 void ositoCarinoso(){
-    printf("\033[1;1H\033[2J");
-    printf("\n\n\n\n\n\n");
-    printf("                                   _     _   \n");
-    printf("                                  (c).-.(c)  \n");
-    printf("                                   / ._. \\  \n");
-    printf("                                 __\\( Y )/__\n");
-    printf("                                (_.-/'-'\\-._)\n");
-    printf("                                   || o ||   \n");
-    printf("                                 _.' `-' '._ \n");
-    printf("                                (.-./`-'\\.-.)\n");
-    printf("                                 `-'     `-' \n");
+    printf("\033[1;1H\033[2J");              
+    printf("   _     _   \n");
+    printf("  (c).-.(c)  \n");
+    printf("   / ._. \\  \n");
+    printf(" __\\( Y )/__\n");
+    printf("(_.-/'-'\\-._)\n");
+    printf("   || o ||   \n");
+    printf(" _.' `-' '._ \n");
+    printf("(.-./`-'\\.-.)\n");
+    printf(" `-'     `-' \n");
     usleep(100000);
     printf("\033[1;1H\033[2J");    
 }
