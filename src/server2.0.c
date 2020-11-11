@@ -286,12 +286,15 @@ int tenthCTF()
         printf("¡Genial!, ya lograron meter un programa en quine.c, veamos si hacelo que corresponde.");
         res = popen("./quine | diff - quine.c", "r");
         n = fread(result, sizeof(char), 1024, res);
-        if (n == 0)
-            return 1;
+        if (n == 0){
+            printf("La respuesta es chin_chu_lan_cha")
+        }
         result[n - 1] = 0;
     }
-    else
+    else{
         perror("gcc");
+        return 0;
+    }
     return 1;
 }
 
