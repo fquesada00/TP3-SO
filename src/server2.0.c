@@ -10,6 +10,7 @@
 #define PORT 8080
 #define CTFS 12
 #define MD5_LENGTH 32
+int nums[100] = {4, 18, 19, 14, -33, 4, 18, -33, 20, 13, -33, 4, 0, 18, 19, 4, 17, -33, 4, 6, 6};
 char easy[] = "too_easy";
 int firstCTF();
 int secondCTF();
@@ -24,7 +25,6 @@ int tenthCTF();
 int eleventhCTF();
 int twelfthCTF();
 
-
 char *hashes[CTFS] = {"f959505ee0c9d7fb7d81a0904aa4e9f4", "244f7439f45f207f1eb89fb2344a4767", "d4daf850c3fcce947992440e3c17dd82", "53b04de7d6d99df86aa0289418f2b317", "ce0c1111d26e426e0ea7c1f58d5488fe", "752435d46843b72130c3b0b3bc1220d4", "d281db859d7ca31e15551150a10d20ad", "e09635a04dc73332ceb8f2488c7eea1a", "5473c71236bfb255256bc59958fb165a", "c2fb1566098f29ce6b5048fcd6aad77c", "869c4f21dcb4e24138d4a016ed000939", "fea087517c26fadd409bd4b9dc642555"};
 int (*challenges[CTFS])() = {firstCTF, secondCTF, thirdCTF, forthCTF, fifthCTF, sixthCTF, seventhCTF, eigthCTF, ninthCTF, tenthCTF, eleventhCTF, twelfthCTF};
 char *questions[CTFS] = {"¿Cómo descubrieron el protocolo, la dirección y el puerto para conectarse?", "¿Qué diferencias hay entre TCP y UDP y en qué casos conviene usar cada uno?", "¿El puerto que usaron para conectarse al server es el mismo que usan para mandar las respuestas? ¿Por qué?", "¿Qué útil abstracción es utilizada para comunicarse con sockets? ¿se puede utilizar read(2) y write(2) para operar?", "¿Cómo garantiza TCP que los paquetes llegan en orden y no se pierden?", "Un servidor suele crear un nuevo proceso o thread para atender las conexiones entrantes. ¿Qué conviene más?", "¿Cómo se puede implementar un servidor que atienda muchas conexiones sin usar procesos ni threads?", "¿Qué aplicaciones se pueden utilizar para ver el tráfico por la red?", "sockets es un mecanismo de IPC. ¿Qué es más eficiente entre sockets y pipes?", "¿Cuáles son las características del protocolo SCTP?", "¿Qué es un RFC?", "¿Fue divertido?"};
@@ -33,7 +33,7 @@ char *answers[CTFS] = {"entendido", "itba", "M4GFKZ289aku", "fk3wfLCm3QvS", "too
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, val_read;
+    int server_fd, client_fd, val_read;
     int opt = 1;
     struct sockaddr_in address;
     char buffer[1024] = {0};
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    if ((new_socket = accept(server_fd, (struct sockaddr_in *)&address, (socklen_t *)&addrlen)) < 0)
+    if ((client_fd = accept(server_fd, (struct sockaddr_in *)&address, (socklen_t *)&addrlen)) < 0)
     {
         perror("accept");
         exit(EXIT_FAILURE);
@@ -71,7 +71,7 @@ int main(int argc, char const *argv[])
     int ctfs = 0;
     while (ctfs < CTFS)
     {
-        generalCTF(new_socket, hashes[ctfs], challenges[ctfs], questions[ctfs]);
+        generalCTF(client_fd, hashes[ctfs], challenges[ctfs], questions[ctfs]);
         ctfs++;
     }
     //test_connection(new_socket);
@@ -87,6 +87,18 @@ void test_connection(int socket_fd)
     printf("Enviado!\n");
 }
 
+char *decrypt(int n[], char c, int size)
+{
+    char * buff = malloc(size+1);
+    for (int i = 0; i < size; i++)
+    {
+        buff[i] = c + n[i];
+    }
+    buff[size] = '\0';
+    printf("%s\n", buff);
+    return buff;
+}
+
 int checkGivenAnswer(char *hash, char *givenAnswer)
 {
     if (givenAnswer == NULL)
@@ -99,6 +111,8 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     res = popen(command, "r");
     fread(result, sizeof(char), 1024, res);
     pclose(res);
+    char *msg = decrypt(nums, 'A', 21);
+    free(msg);
     if (strncmp(hash, result, MD5_LENGTH))
     {
         printf("Respuesta incorrecta: %s", givenAnswer);
@@ -107,19 +121,31 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     return 1;
 }
 
-int generalCTF(int sv_fd, char *hash, int (*challenge)(), char *question)
+int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
 {
     char ok = 0;
+    char *response;
+    int n;
+    FILE *client_file = fdopen(client_fd, "r");
+    if (client_file == NULL)
+    {
+        perror("fdopen");
+        exit(EXIT_FAILURE);
+    }
     do
     {
-
         printf("------------- DESAFIO -------------\n");
         challenge();
         printf("\n\n----- PREGUNTA PARA INVESTIGAR -----\n");
         printf("%s\n", question);
-        char response[1024] = {0};
-        read(sv_fd, response, 1024);
-        if(strcmp(response, "ositOS\n") == 0){
+        if (getline(&response, &n, client_file) == -1)
+        {
+            free(response);
+            perror("getline");
+            exit(EXIT_FAILURE);
+        }
+        if (strcmp(response, "ositOS\n") == 0)
+        {
             //OSITOS
         }
         ok = checkGivenAnswer(hash, response);
@@ -179,12 +205,12 @@ int seventhCTF()
     int len = strlen(ans);
     for (int i = 0; i < len; i++)
     {
-        write(1,ans+i,1);
-        for (int j = 0; j < randInt(1,6); j++)
+        write(1, ans + i, 1);
+        for (int j = 0; j < randInt(1, 6); j++)
         {
             int c[2] = {0};
-            c[0] = randInt(33,125);
-            write(2,c,1);
+            c[0] = randInt(33, 125);
+            write(2, c, 1);
         }
     }
     putchar('\n');
@@ -211,16 +237,21 @@ int tenthCTF()
     //SE PERDIO EN ALGUN PUSH O LO TIENE GASTI
     char command[1024] = {0};
     char result[1024] = {0};
-    FILE *res;
-    sprintf(command, "gcc quine.c -o quine ; diff <(./quine) quine.c");
-    res = popen(command, "r");
-    int n = fread(result, sizeof(char), 1024, res);
-    pclose(res);
-    if(n == 0)
-        return 1;
-    result[n-1] = 0;
-    printf("%s",result);
+    int n;
     printf("quine\n");
+    FILE *res;
+    res = popen("gcc quine.c -o quine", "r");
+    if (pclose(res) == 0)
+    {
+        printf("¡Genial!, ya lograron meter un programa en quine.c, veamos si hacelo que corresponde.");
+        res = popen("./quine | diff - quine.c", "r");
+        n = fread(result, sizeof(char), 1024, res);
+        if (n == 0)
+            return 1;
+        result[n - 1] = 0;
+    }
+    else
+        perror("gcc");
     return 1;
 }
 
