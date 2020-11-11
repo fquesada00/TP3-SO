@@ -212,7 +212,7 @@ int tenthCTF()
     char command[1024] = {0};
     char result[1024] = {0};
     FILE *res;
-    sprintf(command, "gcc ../quine.c -o quine && diff <(./quine) ../quine.c");
+    sprintf(command, "gcc quine.c -o quine ; diff <(./quine) quine.c");
     res = popen(command, "r");
     int n = fread(result, sizeof(char), 1024, res);
     pclose(res);
