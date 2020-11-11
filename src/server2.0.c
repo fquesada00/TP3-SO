@@ -91,7 +91,7 @@ void test_connection(int socket_fd)
 
 char *decrypt(int n[], char c, int size)
 {
-    char * buff = malloc(size+1);
+    char *buff = malloc(size + 1);
     for (int i = 0; i < size; i++)
     {
         buff[i] = c + n[i];
@@ -124,12 +124,11 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
         printf("\r");
         return 0;
     }
-    ositoCarinoso();
     return 1;
 }
 
-
-void ositoCarinoso(){
+void ositoCarinoso()
+{
     printf("\033[1;1H\033[2J");
     printf("\n\n\n\n\n\n");
     printf("                                   _     _   \n");
@@ -142,7 +141,7 @@ void ositoCarinoso(){
     printf("                                (.-./`-'\\.-.)\n");
     printf("                                 `-'     `-' \n");
     usleep(100000);
-    printf("\033[1;1H\033[2J");    
+    printf("\033[1;1H\033[2J");
 }
 
 int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
@@ -163,7 +162,6 @@ int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
         challenge();
         printf("\n\n----- PREGUNTA PARA INVESTIGAR -----\n");
         printf("%s\n", question);
-         
         if (getline(&response, &n, client_file) == -1)
         {
             free(response);
@@ -172,22 +170,27 @@ int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
         }
         if (strcmp(response, "ositOS\n") == 0)
         {
-            //OSITOS
+            ositoCarinoso();
         }
-        ok = checkGivenAnswer(hash, response);
-   
+        else
+        {
+            ok = checkGivenAnswer(hash, response);
+        }
+
     } while (!ok);
     return 1;
 }
 
-void progressBar(){
-    char t[22] = {'.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'};
+void progressBar()
+{
+    char t[22] = {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'};
     t[21] = 0;
     int i = 0;
-    for(int j = 0; j <= 100; j++){
-        i = j/5;
+    for (int j = 0; j <= 100; j++)
+    {
+        i = j / 5;
         t[i] = '#';
-        printf("[%s] %%%d", t,j);
+        printf("[%s] %%%d", t, j);
         printf("\r");
         fflush(stdout);
         usleep(10000);
@@ -262,7 +265,9 @@ int seventhCTF()
 int eigthCTF()
 {
     printf("¿?\n\n\033[40;30mLa respuesta es BUmyYq5XxXGt\033[0m\n");
-    printf("\033[8mEsto es un Easter Egg\033[0m");
+    char *buff = decrypt(nums, 'A', 21);
+    printf("\033[8m%s\033[0m", buff);
+    free(buff);
     return 1;
 }
 
@@ -302,6 +307,12 @@ void gdbme()
     {
         printf("La respuesta es gdb_rules\n");
     }
+    if (getpid() == 0x87654321)
+    {
+        char *buff = decrypt(nums, 'A', 21);
+        printf("%s\n", buff);
+        free(buff);
+    }
 }
 
 int eleventhCTF()
@@ -317,32 +328,25 @@ int twelfthCTF()
     srand(time(NULL));
     double n = 0.0, sum = 0.0;
     int sequence = randInt(1, 3);
-    //ELIMINAR FOR EXTERNO Y DESCOMENTAR EL PRINTF, USADO PARA CHEQUEOS UNICAMENTE
-    //MODIFICAR LA CANT DE NROS, DIGO QUE DEBERIA SER MAYOR A 300
-    for (int j = 0; j < 8; j++)
+    for (int i = 0, k; i < 400; i++)
     {
-        sum = 0.0;
-        for (int i = 0, k; i < 300; i++)
+        if (i % 4 == 0)
         {
-            if (i % 4 == 0)
-            {
-                n = ((double)rand() / RAND_MAX) - 0.5;
-            }
-            else if (i % sequence == 0)
-            {
-                n = randReal(0.7, 2.1);
-            }
-            else
-            {
-                n = ((double)rand() / RAND_MAX) * 0.2;
-            }
-            k = rand() & 0x1;
-            if (k)
-                n *= -1;
-            sum += n;
-            //printf("%g ", n);
+            n = ((double)rand() / RAND_MAX) - 0.5;
         }
-        printf("PROMEDIO = %g\n", sum / 300);
+        else if (i % sequence == 0)
+        {
+            n = randReal(0.7, 2.1);
+        }
+        else
+        {
+            n = ((double)rand() / RAND_MAX) * 0.2;
+        }
+        k = rand() & 0x1;
+        if (k)
+            n *= -1;
+        sum += n;
+        printf("%g ", n);
     }
     return 1;
 }
