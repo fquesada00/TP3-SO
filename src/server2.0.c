@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <time.h>
 #define PORT 8080
 #define CTFS 12
 #define MD5_LENGTH 32
@@ -184,15 +185,43 @@ int tenthCTF()
     return 1;
 }
 
+void gdbme()
+{
+    if (getpid() == 0x12345678)
+    {
+        printf("La respuesta es gdb_rules\n");
+    }
+}
+
 int eleventhCTF()
 {
     printf("b gdbme y encontrá el valor mágico\n\nENTER para reintentar.\n");
+    gdbme();
     return 1;
 }
 
 int twelfthCTF()
 {
     //FALTA LA GENERACION DE PUNTOS RANDOM CON COS Y LOG
-    printf("Me conoces\n");
+    printf("Me conoces\n\n");
+    srand(time(NULL));
+    double n = 0.0;
+    for (int i = 0, k; i < 300; i++)
+    {
+        if (i % 3 == 0)
+        {
+            n = ((double)rand() / RAND_MAX) - 0.5;
+        }
+        else
+        {
+            n = ((double)rand() / RAND_MAX) * 0.2;
+        }
+        k = rand() & 0x1;
+        if (k)
+            n *= -1;
+        printf("%g ", n);
+    }
     return 1;
 }
+
+void too_easy(){};

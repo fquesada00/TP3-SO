@@ -38,7 +38,7 @@ int main(int argc, char const *argv[])
     {
         send(socket_fd, answers[ctfs], strlen(answers[ctfs]),0);
         ctfs++;
-        sleep(3);
+        sleep(1);
     }
     //test_connection(socket_fd);
     return 0;
