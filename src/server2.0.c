@@ -23,7 +23,8 @@ int ninthCTF();
 int tenthCTF();
 int eleventhCTF();
 int twelfthCTF();
-
+void progressBar();
+void ositoCarinoso();
 
 char *hashes[CTFS] = {"f959505ee0c9d7fb7d81a0904aa4e9f4", "244f7439f45f207f1eb89fb2344a4767", "d4daf850c3fcce947992440e3c17dd82", "53b04de7d6d99df86aa0289418f2b317", "ce0c1111d26e426e0ea7c1f58d5488fe", "752435d46843b72130c3b0b3bc1220d4", "d281db859d7ca31e15551150a10d20ad", "e09635a04dc73332ceb8f2488c7eea1a", "5473c71236bfb255256bc59958fb165a", "c2fb1566098f29ce6b5048fcd6aad77c", "869c4f21dcb4e24138d4a016ed000939", "fea087517c26fadd409bd4b9dc642555"};
 int (*challenges[CTFS])() = {firstCTF, secondCTF, thirdCTF, forthCTF, fifthCTF, sixthCTF, seventhCTF, eigthCTF, ninthCTF, tenthCTF, eleventhCTF, twelfthCTF};
@@ -102,27 +103,64 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     if (strncmp(hash, result, MD5_LENGTH))
     {
         printf("Respuesta incorrecta: %s", givenAnswer);
+        fflush(stdout);
+        sleep(1);
+        printf("\r");
         return 0;
     }
+    ositoCarinoso();
     return 1;
+}
+
+void ositoCarinoso(){
+    printf("\033[1;1H\033[2J");
+    printf("\n\n\n\n\n\n");
+    printf("                                   _     _   \n");
+    printf("                                  (c).-.(c)  \n");
+    printf("                                   / ._. \\  \n");
+    printf("                                 __\\( Y )/__\n");
+    printf("                                (_.-/'-'\\-._)\n");
+    printf("                                   || o ||   \n");
+    printf("                                 _.' `-' '._ \n");
+    printf("                                (.-./`-'\\.-.)\n");
+    printf("                                 `-'     `-' \n");
+    usleep(100000);
+    printf("\033[1;1H\033[2J");    
 }
 
 int generalCTF(int sv_fd, char *hash, int (*challenge)(), char *question)
 {
     char ok = 0;
+    printf("\033[1;1H\033[2J");
     do
     {
-
+        printf("\033[1;1H\033[2J");
         printf("------------- DESAFIO -------------\n");
         challenge();
         printf("\n\n----- PREGUNTA PARA INVESTIGAR -----\n");
         printf("%s\n", question);
         char response[1024] = {0};
         read(sv_fd, response, 1024);
+        progressBar(); 
         ok = checkGivenAnswer(hash, response);
-        printf("\n\n\n\n\n\n\n");
+   
     } while (!ok);
     return 1;
+}
+
+void progressBar(){
+    char t[22] = {'.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'};
+    t[21] = 0;
+    int i = 0;
+    for(int j = 0; j <= 100; j++){
+        i = j/5;
+        t[i] = '#';
+        printf("[%s] %%%d", t,j);
+        printf("\r");
+        fflush(stdout);
+        usleep(10000);
+    }
+    printf("\n");
 }
 
 int firstCTF()
