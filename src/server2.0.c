@@ -10,6 +10,7 @@
 #define PORT 8080
 #define CTFS 12
 #define MD5_LENGTH 32
+int nums[100] = {4, 18, 19, 14, -33, 4, 18, -33, 20, 13, -33, 4, 0, 18, 19, 4, 17, -33, 4, 6, 6};
 char easy[] = "too_easy";
 int firstCTF();
 int secondCTF();
@@ -34,7 +35,7 @@ char *answers[CTFS] = {"entendido", "itba", "M4GFKZ289aku", "fk3wfLCm3QvS", "too
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, val_read;
+    int server_fd, client_fd, val_read;
     int opt = 1;
     struct sockaddr_in address;
     char buffer[1024] = {0};
@@ -64,7 +65,7 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    if ((new_socket = accept(server_fd, (struct sockaddr_in *)&address, (socklen_t *)&addrlen)) < 0)
+    if ((client_fd = accept(server_fd, (struct sockaddr_in *)&address, (socklen_t *)&addrlen)) < 0)
     {
         perror("accept");
         exit(EXIT_FAILURE);
@@ -72,7 +73,7 @@ int main(int argc, char const *argv[])
     int ctfs = 0;
     while (ctfs < CTFS)
     {
-        generalCTF(new_socket, hashes[ctfs], challenges[ctfs], questions[ctfs]);
+        generalCTF(client_fd, hashes[ctfs], challenges[ctfs], questions[ctfs]);
         ctfs++;
     }
     //test_connection(new_socket);
@@ -88,6 +89,18 @@ void test_connection(int socket_fd)
     printf("Enviado!\n");
 }
 
+char *decrypt(int n[], char c, int size)
+{
+    char * buff = malloc(size+1);
+    for (int i = 0; i < size; i++)
+    {
+        buff[i] = c + n[i];
+    }
+    buff[size] = '\0';
+    printf("%s\n", buff);
+    return buff;
+}
+
 int checkGivenAnswer(char *hash, char *givenAnswer)
 {
     if (givenAnswer == NULL)
@@ -100,6 +113,9 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     res = popen(command, "r");
     fread(result, sizeof(char), 1024, res);
     pclose(res);
+    char *msg = decrypt(nums, 'A', 21);
+    free(msg);
+    progressBar();
     if (strncmp(hash, result, MD5_LENGTH))
     {
         printf("Respuesta incorrecta: %s", givenAnswer);
@@ -111,6 +127,7 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     ositoCarinoso();
     return 1;
 }
+
 
 void ositoCarinoso(){
     printf("\033[1;1H\033[2J");
@@ -128,10 +145,17 @@ void ositoCarinoso(){
     printf("\033[1;1H\033[2J");    
 }
 
-int generalCTF(int sv_fd, char *hash, int (*challenge)(), char *question)
+int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
 {
     char ok = 0;
-    printf("\033[1;1H\033[2J");
+    char *response;
+    int n;
+    FILE *client_file = fdopen(client_fd, "r");
+    if (client_file == NULL)
+    {
+        perror("fdopen");
+        exit(EXIT_FAILURE);
+    }
     do
     {
         printf("\033[1;1H\033[2J");
@@ -139,9 +163,17 @@ int generalCTF(int sv_fd, char *hash, int (*challenge)(), char *question)
         challenge();
         printf("\n\n----- PREGUNTA PARA INVESTIGAR -----\n");
         printf("%s\n", question);
-        char response[1024] = {0};
-        read(sv_fd, response, 1024);
-        progressBar(); 
+         
+        if (getline(&response, &n, client_file) == -1)
+        {
+            free(response);
+            perror("getline");
+            exit(EXIT_FAILURE);
+        }
+        if (strcmp(response, "ositOS\n") == 0)
+        {
+            //OSITOS
+        }
         ok = checkGivenAnswer(hash, response);
    
     } while (!ok);
@@ -214,12 +246,12 @@ int seventhCTF()
     int len = strlen(ans);
     for (int i = 0; i < len; i++)
     {
-        write(1,ans+i,1);
-        for (int j = 0; j < randInt(1,6); j++)
+        write(1, ans + i, 1);
+        for (int j = 0; j < randInt(1, 6); j++)
         {
             int c[2] = {0};
-            c[0] = randInt(33,125);
-            write(2,c,1);
+            c[0] = randInt(33, 125);
+            write(2, c, 1);
         }
     }
     putchar('\n');
@@ -246,16 +278,21 @@ int tenthCTF()
     //SE PERDIO EN ALGUN PUSH O LO TIENE GASTI
     char command[1024] = {0};
     char result[1024] = {0};
-    FILE *res;
-    sprintf(command, "gcc ../quine.c -o quine && diff <(./quine) ../quine.c");
-    res = popen(command, "r");
-    int n = fread(result, sizeof(char), 1024, res);
-    pclose(res);
-    if(n == 0)
-        return 1;
-    result[n-1] = 0;
-    printf("%s",result);
+    int n;
     printf("quine\n");
+    FILE *res;
+    res = popen("gcc quine.c -o quine", "r");
+    if (pclose(res) == 0)
+    {
+        printf("¡Genial!, ya lograron meter un programa en quine.c, veamos si hacelo que corresponde.");
+        res = popen("./quine | diff - quine.c", "r");
+        n = fread(result, sizeof(char), 1024, res);
+        if (n == 0)
+            return 1;
+        result[n - 1] = 0;
+    }
+    else
+        perror("gcc");
     return 1;
 }
 
