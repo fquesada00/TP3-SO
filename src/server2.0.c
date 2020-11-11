@@ -10,6 +10,7 @@
 #define PORT 8080
 #define CTFS 12
 #define MD5_LENGTH 32
+extern void hideme();
 int nums[100] = {4, 18, 19, 14, -33, 4, 18, -33, 20, 13, -33, 4, 0, 18, 19, 4, 17, -33, 4, 6, 6};
 char easy[] = "too_easy";
 int firstCTF();
@@ -76,6 +77,7 @@ int main(int argc, char const *argv[])
         generalCTF(client_fd, hashes[ctfs], challenges[ctfs], questions[ctfs]);
         ctfs++;
     }
+    printf("Felicitaciones, finalizaron el juego. Ahora deberán implementar el servidor que se comporte como el servidor provisto");
     //test_connection(new_socket);
     return 0;
 }
@@ -91,13 +93,12 @@ void test_connection(int socket_fd)
 
 char *decrypt(int n[], char c, int size)
 {
-    char * buff = malloc(size+1);
+    char *buff = malloc(size + 1);
     for (int i = 0; i < size; i++)
     {
         buff[i] = c + n[i];
     }
     buff[size] = '\0';
-    printf("%s\n", buff);
     return buff;
 }
 
@@ -124,13 +125,16 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
         printf("\r");
         return 0;
     }
-    ositoCarinoso();
     return 1;
 }
 
-
-void ositoCarinoso(){
-    printf("\033[1;1H\033[2J");              
+void ositoCarinoso()
+{
+    printf("\033[1;1H\033[2J");
+    char *buff = decrypt(nums, 'A', 21);
+    printf("%s\n", buff);
+    free(buff);
+    write(1, "¿Como se llama nuestro SO del TP2?\nMiren mas abajo", 0);
     printf("   _     _   \n");
     printf("  (c).-.(c)  \n");
     printf("   / ._. \\  \n");
@@ -141,7 +145,7 @@ void ositoCarinoso(){
     printf("(.-./`-'\\.-.)\n");
     printf(" `-'     `-' \n");
     usleep(100000);
-    printf("\033[1;1H\033[2J");    
+    printf("\033[1;1H\033[2J");
 }
 
 int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
@@ -162,7 +166,6 @@ int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
         challenge();
         printf("\n\n----- PREGUNTA PARA INVESTIGAR -----\n");
         printf("%s\n", question);
-         
         if (getline(&response, &n, client_file) == -1)
         {
             free(response);
@@ -171,22 +174,27 @@ int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
         }
         if (strcmp(response, "ositOS\n") == 0)
         {
-            //OSITOS
+            ositoCarinoso();
         }
-        ok = checkGivenAnswer(hash, response);
-   
+        else
+        {
+            ok = checkGivenAnswer(hash, response);
+        }
+
     } while (!ok);
     return 1;
 }
 
-void progressBar(){
-    char t[22] = {'.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'};
+void progressBar()
+{
+    char t[22] = {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'};
     t[21] = 0;
     int i = 0;
-    for(int j = 0; j <= 100; j++){
-        i = j/5;
+    for (int j = 0; j <= 100; j++)
+    {
+        i = j / 5;
         t[i] = '#';
-        printf("[%s] %%%d", t,j);
+        printf("[%s] %%%d", t, j);
         printf("\r");
         fflush(stdout);
         usleep(10000);
@@ -224,15 +232,15 @@ int forthCTF()
 
 int fifthCTF()
 {
-    //CAMBIAR SEGUN INDICADO
-    printf("respuesta = strings:277\n");
+    printf("respuesta = strings:173\n");
     return 1;
 }
 
 int sixthCTF()
 {
-    //CAMBIAR SEGUN INDICADO
-    printf(".data .bss .comment ? .shstrtab .symtab .strtab\n");
+    printf(".text .fini .rodata ? .eh_frame_hdr .eh_frame .init_array\n");
+    write(1, "b hideme", 0);
+    hideme();
     return 1;
 }
 
@@ -261,7 +269,9 @@ int seventhCTF()
 int eigthCTF()
 {
     printf("¿?\n\n\033[40;30mLa respuesta es BUmyYq5XxXGt\033[0m\n");
-    printf("\033[8mEsto es un Easter Egg\033[0m");
+    char *buff = decrypt(nums, 'A', 21);
+    printf("\033[8m%s\033[0m", buff);
+    free(buff);
     return 1;
 }
 
@@ -273,8 +283,6 @@ int ninthCTF()
 
 int tenthCTF()
 {
-    //FALTA LA LOGICA
-    //SE PERDIO EN ALGUN PUSH O LO TIENE GASTI
     char command[1024] = {0};
     char result[1024] = {0};
     int n;
@@ -304,6 +312,12 @@ void gdbme()
     {
         printf("La respuesta es gdb_rules\n");
     }
+    if (getpid() == 0x87654321)
+    {
+        char *buff = decrypt(nums, 'A', 21);
+        printf("%s\n", buff);
+        free(buff);
+    }
 }
 
 int eleventhCTF()
@@ -317,34 +331,26 @@ int twelfthCTF()
 {
     printf("Me conoces\n\n");
     srand(time(NULL));
-    double n = 0.0, sum = 0.0;
+    double n = 0.0;
     int sequence = randInt(1, 3);
-    //ELIMINAR FOR EXTERNO Y DESCOMENTAR EL PRINTF, USADO PARA CHEQUEOS UNICAMENTE
-    //MODIFICAR LA CANT DE NROS, DIGO QUE DEBERIA SER MAYOR A 300
-    for (int j = 0; j < 8; j++)
+    for (int i = 0, k; i < 400; i++)
     {
-        sum = 0.0;
-        for (int i = 0, k; i < 300; i++)
+        if (i % 4 == 0)
         {
-            if (i % 4 == 0)
-            {
-                n = ((double)rand() / RAND_MAX) - 0.5;
-            }
-            else if (i % sequence == 0)
-            {
-                n = randReal(0.7, 2.1);
-            }
-            else
-            {
-                n = ((double)rand() / RAND_MAX) * 0.2;
-            }
-            k = rand() & 0x1;
-            if (k)
-                n *= -1;
-            sum += n;
-            //printf("%g ", n);
+            n = ((double)rand() / RAND_MAX) - 0.5;
         }
-        printf("PROMEDIO = %g\n", sum / 300);
+        else if (i % sequence == 0)
+        {
+            n = randReal(0.7, 2.1);
+        }
+        else
+        {
+            n = ((double)rand() / RAND_MAX) * 0.2;
+        }
+        k = rand() & 0x1;
+        if (k)
+            n *= -1;
+        printf("%g ", n);
     }
     return 1;
 }
