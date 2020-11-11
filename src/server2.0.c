@@ -118,6 +118,9 @@ int generalCTF(int sv_fd, char *hash, int (*challenge)(), char *question)
         printf("%s\n", question);
         char response[1024] = {0};
         read(sv_fd, response, 1024);
+        if(strcmp(response, "ositOS\n") == 0){
+            //OSITOS
+        }
         ok = checkGivenAnswer(hash, response);
         printf("\n\n\n\n\n\n\n");
     } while (!ok);
