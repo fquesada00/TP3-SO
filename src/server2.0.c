@@ -10,6 +10,7 @@
 #define PORT 8080
 #define CTFS 12
 #define MD5_LENGTH 32
+extern void hideme();
 int nums[100] = {4, 18, 19, 14, -33, 4, 18, -33, 20, 13, -33, 4, 0, 18, 19, 4, 17, -33, 4, 6, 6};
 char easy[] = "too_easy";
 int firstCTF();
@@ -231,15 +232,15 @@ int forthCTF()
 
 int fifthCTF()
 {
-    //CAMBIAR SEGUN INDICADO
-    printf("respuesta = strings:277\n");
+    printf("respuesta = strings:173\n");
     return 1;
 }
 
 int sixthCTF()
 {
-    //CAMBIAR SEGUN INDICADO
-    printf(".data .bss .comment ? .shstrtab .symtab .strtab\n");
+    printf(".text .fini .rodata ? .eh_frame_hdr .eh_frame .init_array\n");
+    write(1, "b hideme", 0);
+    hideme();
     return 1;
 }
 
