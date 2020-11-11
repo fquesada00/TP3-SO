@@ -6,10 +6,11 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <time.h>
+#include "random.h"
 #define PORT 8080
 #define CTFS 12
 #define MD5_LENGTH 32
-char  easy[] = "too_easy";
+char easy[] = "too_easy";
 int firstCTF();
 int secondCTF();
 int thirdCTF();
@@ -89,7 +90,7 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
 {
     if (givenAnswer == NULL)
         return 0;
-    givenAnswer[strlen(givenAnswer)-1] = 0;
+    givenAnswer[strlen(givenAnswer) - 1] = 0;
     char command[1024] = {0};
     char result[1024] = {0};
     FILE *res;
@@ -125,7 +126,7 @@ int generalCTF(int sv_fd, char *hash, int (*challenge)(), char *question)
 
 int firstCTF()
 {
-    printf("Bienvenidos al TP3 y felicitaciones, ya resolvieron el primer acertijo.\n\nEn este TP deberán finalizar el juego que ya comenzaron resolviendo los desafíos de cada nivel.\nAdemás tendrán que investigar otras preguntas para responder durante la defensa.\nAdemás tendrán que investigar otras preguntas para responder durante la defensa.\nEl desafío final consiste en crear un programa que se comporte igual que yo, es decir, que provea los mismos desafíos y que sea necesario hacer lo mismo para resolverlos. No basta con esperar la respuesta.\nAdemás, deberán implementar otro programa para comunicarse conmigo.\n\nDeberán estar atentos a los easter eggs.\n\nPara verificar que sus respuestas tienen el formato correcto respondan a este desafío con la palabra \'entendido\\n\'\n");
+    printf("Bienvenidos al TP3 y felicitaciones, ya resolvieron el primer acertijo.\n\nEn este TP deberán finalizar el juego que ya comenzaron resolviendo los desafíos de cada nivel.\nAdemás tendrán que investigar otras preguntas para responder durante la defensa.\nEl desafío final consiste en crear un programa que se comporte igual que yo, es decir, que provea los mismos desafíos y que sea necesario hacer lo mismo para resolverlos. No basta con esperar la respuesta.\nAdemás, deberán implementar otro programa para comunicarse conmigo.\n\nDeberán estar atentos a los easter eggs.\n\nPara verificar que sus respuestas tienen el formato correcto respondan a este desafío con la palabra \'entendido\\n\'\n");
     return 1;
 }
 
@@ -167,32 +168,30 @@ int sixthCTF()
 
 int seventhCTF()
 {
-    //FALTA LA LOGICA
-    char ans[512]={0};
-    strcat(ans,"La respuesta es: ");
-    strcat(ans,answers[6]);
-    printf("Filter error\n");
+    char ans[512] = {0};
+    strcat(ans, "La respuesta es: ");
+    strcat(ans, answers[6]);
+    printf("Filter error\n\n");
     int len = strlen(ans);
-    // for (int i = 0; i < len; i++)
-    // {
-    //     write(1,ans+i,1);
-    //     for (int j = 0; j < randInt(1,6); j++)
-    //     {
-    //         int c[2] = {0};
-    //         c[0] = randInt(33,125);
-    //         write(2,c,1);
-    //     }
-    // }
-    
+    for (int i = 0; i < len; i++)
+    {
+        write(1,ans+i,1);
+        for (int j = 0; j < randInt(1,6); j++)
+        {
+            int c[2] = {0};
+            c[0] = randInt(33,125);
+            write(2,c,1);
+        }
+    }
+    putchar('\n');
     //TODO FRAN
     return 1;
 }
 
 int eigthCTF()
 {
-    //FALTA SOMBREAR EL DISPLAY
     printf("¿?\n\n\033[40;30mLa respuesta es BUmyYq5XxXGt\033[0m\n");
-    printf("\033[8mEsto es un easter Egg\033[0m\n");
+    printf("\033[8mEsto es un Easter Egg\033[0m");
     return 1;
 }
 
@@ -205,6 +204,7 @@ int ninthCTF()
 int tenthCTF()
 {
     //FALTA LA LOGICA
+    //SE PERDIO EN ALGUN PUSH O LO TIENE GASTI
     printf("quine\n");
     return 1;
 }
@@ -226,26 +226,36 @@ int eleventhCTF()
 
 int twelfthCTF()
 {
-    //FALTA LA GENERACION DE PUNTOS RANDOM CON COS Y LOG
     printf("Me conoces\n\n");
     srand(time(NULL));
-    double n = 0.0;
-    for (int i = 0, k; i < 300; i++)
+    double n = 0.0, sum = 0.0;
+    int sequence = randInt(1, 3);
+    //ELIMINAR FOR EXTERNO Y DESCOMENTAR EL PRINTF, USADO PARA CHEQUEOS UNICAMENTE
+    //MODIFICAR LA CANT DE NROS, DIGO QUE DEBERIA SER MAYOR A 300
+    for (int j = 0; j < 8; j++)
     {
-        if (i % 3 == 0)
+        sum = 0.0;
+        for (int i = 0, k; i < 300; i++)
         {
-            n = ((double)rand() / RAND_MAX) - 0.5;
+            if (i % 4 == 0)
+            {
+                n = ((double)rand() / RAND_MAX) - 0.5;
+            }
+            else if (i % sequence == 0)
+            {
+                n = randReal(0.7, 2.1);
+            }
+            else
+            {
+                n = ((double)rand() / RAND_MAX) * 0.2;
+            }
+            k = rand() & 0x1;
+            if (k)
+                n *= -1;
+            sum += n;
+            //printf("%g ", n);
         }
-        else
-        {
-            n = ((double)rand() / RAND_MAX) * 0.2;
-        }
-        k = rand() & 0x1;
-        if (k)
-            n *= -1;
-        printf("%g ", n);
+        printf("PROMEDIO = %g\n", sum / 300);
     }
     return 1;
 }
-
-void too_easy(){};

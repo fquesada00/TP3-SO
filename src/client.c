@@ -33,7 +33,7 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
     int ctfs = 0;
-    char *answers[12] = {"entendido", "itba", "M4GFKZ289aku", "fk3wfLCm3QvS", "too_easy", ".RUN_ME", "K5n2UFfpFMUN", "BUmyYq5XxXGt", "u^v", "chin_chu_lan_cha", "gdb_rules", "normal"};
+    char *answers[12] = {"entendido\n", "itba\n", "M4GFKZ289aku\n", "fk3wfLCm3QvS\n", "too_easy\n", ".RUN_ME\n", "K5n2UFfpFMUN\n", "BUmyYq5XxXGt\n", "u^v\n", "chin_chu_lan_cha\n", "gdb_rules\n", "normal\n"};
     while (ctfs < CTFS)
     {
         send(socket_fd, answers[ctfs], strlen(answers[ctfs]),0);
