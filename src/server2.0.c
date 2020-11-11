@@ -76,6 +76,7 @@ int main(int argc, char const *argv[])
         generalCTF(client_fd, hashes[ctfs], challenges[ctfs], questions[ctfs]);
         ctfs++;
     }
+    printf("Felicitaciones, finalizaron el juego. Ahora deberán implementar el servidor que se comporte como el servidor provisto");
     //test_connection(new_socket);
     return 0;
 }
@@ -97,7 +98,6 @@ char *decrypt(int n[], char c, int size)
         buff[i] = c + n[i];
     }
     buff[size] = '\0';
-    printf("%s\n", buff);
     return buff;
 }
 
@@ -130,16 +130,19 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
 void ositoCarinoso()
 {
     printf("\033[1;1H\033[2J");
-    printf("\n\n\n\n\n\n");
-    printf("                                   _     _   \n");
-    printf("                                  (c).-.(c)  \n");
-    printf("                                   / ._. \\  \n");
-    printf("                                 __\\( Y )/__\n");
-    printf("                                (_.-/'-'\\-._)\n");
-    printf("                                   || o ||   \n");
-    printf("                                 _.' `-' '._ \n");
-    printf("                                (.-./`-'\\.-.)\n");
-    printf("                                 `-'     `-' \n");
+    char *buff = decrypt(nums, 'A', 21);
+    printf("%s\n", buff);
+    free(buff);
+    write(1, "¿Como se llama nuestro SO del TP2?\nMiren mas abajo", 0);
+    printf("   _     _   \n");
+    printf("  (c).-.(c)  \n");
+    printf("   / ._. \\  \n");
+    printf(" __\\( Y )/__\n");
+    printf("(_.-/'-'\\-._)\n");
+    printf("   || o ||   \n");
+    printf(" _.' `-' '._ \n");
+    printf("(.-./`-'\\.-.)\n");
+    printf(" `-'     `-' \n");
     usleep(100000);
     printf("\033[1;1H\033[2J");
 }
@@ -279,8 +282,6 @@ int ninthCTF()
 
 int tenthCTF()
 {
-    //FALTA LA LOGICA
-    //SE PERDIO EN ALGUN PUSH O LO TIENE GASTI
     char command[1024] = {0};
     char result[1024] = {0};
     int n;
@@ -326,7 +327,7 @@ int twelfthCTF()
 {
     printf("Me conoces\n\n");
     srand(time(NULL));
-    double n = 0.0, sum = 0.0;
+    double n = 0.0;
     int sequence = randInt(1, 3);
     for (int i = 0, k; i < 400; i++)
     {
@@ -345,7 +346,6 @@ int twelfthCTF()
         k = rand() & 0x1;
         if (k)
             n *= -1;
-        sum += n;
         printf("%g ", n);
     }
     return 1;
