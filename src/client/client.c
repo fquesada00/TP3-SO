@@ -11,10 +11,8 @@
 
 int main(int argc, char const *argv[])
 {
-    int socket_fd = 0, valread, opt = 1;
+    int socket_fd = 0;
     struct sockaddr_in address;
-    char *hello = "Hello from client";
-    char buffer[1024] = {0};
     if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("socket fd");

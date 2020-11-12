@@ -37,10 +37,9 @@ char *answers[CTFS] = {"entendido", "itba", "M4GFKZ289aku", "fk3wfLCm3QvS", "too
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, client_fd, val_read;
+    int server_fd, client_fd;
     int opt = 1;
     struct sockaddr_in * address =malloc(sizeof(struct sockaddr_in));
-    char buffer[1024] = {0};
     int addrlen = sizeof(address);
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
@@ -287,7 +286,6 @@ void ninthCTF()
 
 void tenthCTF()
 {
-    char command[1024] = {0};
     char result[1024] = {0};
     int n;
     printf("quine\n");
