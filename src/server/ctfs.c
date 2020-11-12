@@ -42,12 +42,15 @@ void forthCTF()
 
 void fifthCTF()
 {
-    printf("respuesta = strings:173\n");
+    //Varia segun la version de gcc
+    printf("respuesta = strings:177\n");
 }
 
 void sixthCTF()
 {
     printf(".text .fini .rodata ? .eh_frame_hdr .eh_frame .init_array\n");
+    //El unico proposito de la siguiente linea es para que salga el string "b hideme"
+    //en el correcto orden al correr strings
     write(1, "b hideme", 0);
     hideme();
 }

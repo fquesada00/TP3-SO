@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
     }
     size_t n = 0;
     char *response = NULL, done = 0;
-    FILE *client_file = fdopen(0, "r");
+    FILE *client_file = fdopen(STDIN_FILENO, "r");
     if (client_file == NULL)
     {
         perror("fdopen");
@@ -47,12 +47,13 @@ int main(int argc, char const *argv[])
         if (getline(&response, &n, client_file) == -1)
         {
             free(response);
-            close(socket_fd);
             close(server_fd);
+            close(socket_fd);
+            fclose(client_file);
             perror("getline");
             exit(EXIT_FAILURE);
         }
-        if (!strncmp(response, "quit",4))
+        if (!strncmp(response, "quit", 4))
         {
             done = 1;
             continue;
@@ -61,7 +62,8 @@ int main(int argc, char const *argv[])
         send(socket_fd, response, strlen(response), 0);
     }
     free(response);
-    close(socket_fd);
     close(server_fd);
+    close(socket_fd);
+    fclose(client_file);
     return 0;
 }

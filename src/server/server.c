@@ -28,7 +28,12 @@ int main(int argc, char const *argv[])
     int server_fd, client_fd;
     int opt = 1;
     struct sockaddr_in *address = malloc(sizeof(struct sockaddr_in));
-    int addrlen = sizeof(address);
+    if (address == NULL)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    int addrlen = sizeof(*address);
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("socket fd");
@@ -81,7 +86,7 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     fread(result, sizeof(char), 1024, res);
     pclose(res);
     progressBar();
-    if (strncmp(hash, result, MD5_LENGTH))
+    if (strncmp(hash, result, MD5_LENGTH) != 0)
     {
         printf("Respuesta incorrecta: %s", givenAnswer);
         fflush(stdout);
@@ -132,7 +137,7 @@ int generalCTF(int client_fd)
             }
         } while (!ok);
         ctfs++;
-        ok=0;
+        ok = 0;
     }
     free(response);
     fclose(client_file);

@@ -10,6 +10,11 @@ extern int nums[100];
 char *decrypt(int n[], char c, int size)
 {
     char *buff = malloc(size + 1);
+    if (buff == NULL)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
     for (int i = 0; i < size; i++)
     {
         buff[i] = c + n[i];
@@ -24,6 +29,9 @@ void ositoCarinoso()
     char *buff = decrypt(nums, 'A', 21);
     printf("%s\n", buff);
     free(buff);
+    //El unico proposito de la siguiente linea es para que salga el string
+    //"¿Como se llama nuestro SO del TP2?\nMiren mas abajo" en el correcto
+    //orden al correr strings
     write(1, "¿Como se llama nuestro SO del TP2?\nMiren mas abajo", 0);
     printf("   _     _   \n");
     printf("  (c).-.(c)  \n");
