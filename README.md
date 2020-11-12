@@ -1,6 +1,6 @@
 # TP3-SO
 
----------SO-TP2-2Q2020------------
+---------SO-TP3-2Q2020------------
 Alumnos:
 	* Serpe, Octavio
 	* Quesada, Francisco
@@ -8,6 +8,10 @@ Alumnos:
 
 **PARA COMPILAR Y EJECUTAR EN LINUX**
 1) Descargar el repositorio
-2) En esa carpeta hace 'make all'
+2) En esa carpeta ejecutar el comando 'make all'
 3) Ejecutar el archivo 'server'
-4) ¡Mucha suerte descubriendo el resto! Hay un total de cuatro easter eggs
+4) En caso de querer ejecutar el cliente, ejecutar el archivo 'client'. 
+   Este programa recibe por entrada estandar las respectivas respuestas.
+   Si se desea finalizar la ejecución, escribir 'quit' seguido de cualquier
+   caracter (o ninguno)
+5) ¡Mucha suerte descubriendo el resto! Hay un total de cuatro easter eggs
