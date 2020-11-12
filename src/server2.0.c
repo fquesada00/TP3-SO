@@ -13,23 +13,24 @@
 extern void hideme();
 int nums[100] = {4, 18, 19, 14, -33, 4, 18, -33, 20, 13, -33, 4, 0, 18, 19, 4, 17, -33, 4, 6, 6};
 char easy[] = "too_easy";
-int firstCTF();
-int secondCTF();
-int thirdCTF();
-int forthCTF();
-int fifthCTF();
-int sixthCTF();
-int seventhCTF();
-int eigthCTF();
-int ninthCTF();
-int tenthCTF();
-int eleventhCTF();
-int twelfthCTF();
+void firstCTF();
+void secondCTF();
+void thirdCTF();
+void forthCTF();
+void fifthCTF();
+void sixthCTF();
+void seventhCTF();
+void eigthCTF();
+void ninthCTF();
+void tenthCTF();
+void eleventhCTF();
+void twelfthCTF();
 void progressBar();
 void ositoCarinoso();
+int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question);
 
 char *hashes[CTFS] = {"f959505ee0c9d7fb7d81a0904aa4e9f4", "244f7439f45f207f1eb89fb2344a4767", "d4daf850c3fcce947992440e3c17dd82", "53b04de7d6d99df86aa0289418f2b317", "ce0c1111d26e426e0ea7c1f58d5488fe", "752435d46843b72130c3b0b3bc1220d4", "d281db859d7ca31e15551150a10d20ad", "e09635a04dc73332ceb8f2488c7eea1a", "5473c71236bfb255256bc59958fb165a", "c2fb1566098f29ce6b5048fcd6aad77c", "869c4f21dcb4e24138d4a016ed000939", "fea087517c26fadd409bd4b9dc642555"};
-int (*challenges[CTFS])() = {firstCTF, secondCTF, thirdCTF, forthCTF, fifthCTF, sixthCTF, seventhCTF, eigthCTF, ninthCTF, tenthCTF, eleventhCTF, twelfthCTF};
+void * challenges[CTFS]  = {firstCTF, secondCTF, thirdCTF, forthCTF, fifthCTF, sixthCTF, seventhCTF, eigthCTF, ninthCTF, tenthCTF, eleventhCTF, twelfthCTF};
 char *questions[CTFS] = {"¿Cómo descubrieron el protocolo, la dirección y el puerto para conectarse?", "¿Qué diferencias hay entre TCP y UDP y en qué casos conviene usar cada uno?", "¿El puerto que usaron para conectarse al server es el mismo que usan para mandar las respuestas? ¿Por qué?", "¿Qué útil abstracción es utilizada para comunicarse con sockets? ¿se puede utilizar read(2) y write(2) para operar?", "¿Cómo garantiza TCP que los paquetes llegan en orden y no se pierden?", "Un servidor suele crear un nuevo proceso o thread para atender las conexiones entrantes. ¿Qué conviene más?", "¿Cómo se puede implementar un servidor que atienda muchas conexiones sin usar procesos ni threads?", "¿Qué aplicaciones se pueden utilizar para ver el tráfico por la red?", "sockets es un mecanismo de IPC. ¿Qué es más eficiente entre sockets y pipes?", "¿Cuáles son las características del protocolo SCTP?", "¿Qué es un RFC?", "¿Fue divertido?"};
 //BORRAR EL ARRAY DE ANSWERS ANTES DE ENTREGAR
 char *answers[CTFS] = {"entendido", "itba", "M4GFKZ289aku", "fk3wfLCm3QvS", "too_easy", ".RUN_ME", "K5n2UFfpFMUN", "BUmyYq5XxXGt", "u^v", "chin_chu_lan_cha", "gdb_rules", "normal"};
@@ -38,7 +39,7 @@ int main(int argc, char const *argv[])
 {
     int server_fd, client_fd, val_read;
     int opt = 1;
-    struct sockaddr_in address;
+    struct sockaddr_in * address =malloc(sizeof(struct sockaddr_in));
     char buffer[1024] = {0};
     int addrlen = sizeof(address);
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -52,11 +53,12 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    address.sin_family = AF_INET;
-    address.sin_port = htons(PORT);
-    address.sin_addr.s_addr = INADDR_ANY;
+    address->sin_family = AF_INET;
+    address->sin_port = htons(PORT);
+    address->sin_addr.s_addr = INADDR_ANY;
+    // address->sin_addr->s_addr = INADDR_ANY;
 
-    if (bind(server_fd, &address, sizeof(address)) < 0)
+    if (bind(server_fd,(const struct sockaddr *) address, sizeof(*address)) < 0)
     {
         perror("bind");
         exit(EXIT_FAILURE);
@@ -66,7 +68,7 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    if ((client_fd = accept(server_fd, (struct sockaddr_in *)&address, (socklen_t *)&addrlen)) < 0)
+    if ((client_fd = accept(server_fd, (struct sockaddr *)address, (socklen_t *)&addrlen)) < 0)
     {
         perror("accept");
         exit(EXIT_FAILURE);
@@ -79,6 +81,8 @@ int main(int argc, char const *argv[])
     }
     printf("Felicitaciones, finalizaron el juego. Ahora deberán implementar el servidor que se comporte como el servidor provisto");
     //test_connection(new_socket);
+    printf("\033[1;1H\033[2J");
+    free(address);
     return 0;
 }
 
@@ -152,7 +156,7 @@ int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
 {
     char ok = 0;
     char *response;
-    int n;
+    size_t n;
     FILE *client_file = fdopen(client_fd, "r");
     if (client_file == NULL)
     {
@@ -202,49 +206,49 @@ void progressBar()
     printf("\n");
 }
 
-int firstCTF()
+void firstCTF()
 {
     printf("Bienvenidos al TP3 y felicitaciones, ya resolvieron el primer acertijo.\n\nEn este TP deberán finalizar el juego que ya comenzaron resolviendo los desafíos de cada nivel.\nAdemás tendrán que investigar otras preguntas para responder durante la defensa.\nEl desafío final consiste en crear un programa que se comporte igual que yo, es decir, que provea los mismos desafíos y que sea necesario hacer lo mismo para resolverlos. No basta con esperar la respuesta.\nAdemás, deberán implementar otro programa para comunicarse conmigo.\n\nDeberán estar atentos a los easter eggs.\n\nPara verificar que sus respuestas tienen el formato correcto respondan a este desafío con la palabra \'entendido\\n\'\n");
-    return 1;
+    return;
 }
 
-int secondCTF()
+void secondCTF()
 {
     printf("The Wire S1E5\n5295 888 6288\n");
-    return 1;
+    return;
 }
 
-int thirdCTF()
+void thirdCTF()
 {
     printf("https://ibb.co/tc0Hb6w\n");
-    return 1;
+    return ;
 }
 
-int forthCTF()
+void forthCTF()
 {
     printf("EBADF...\n\nwrite: Bad file descriptor\n");
     char buff[512] = {0};
     strcat(buff, "La respuesta es: ");
     strcat(buff, answers[3]);
     write(123, buff, strlen(buff));
-    return 1;
+    return;
 }
 
-int fifthCTF()
+void fifthCTF()
 {
     printf("respuesta = strings:173\n");
-    return 1;
+    return;
 }
 
-int sixthCTF()
+void sixthCTF()
 {
     printf(".text .fini .rodata ? .eh_frame_hdr .eh_frame .init_array\n");
     write(1, "b hideme", 0);
     hideme();
-    return 1;
+    return;
 }
 
-int seventhCTF()
+void seventhCTF()
 {
     char ans[512] = {0};
     strcat(ans, "La respuesta es: ");
@@ -263,25 +267,25 @@ int seventhCTF()
     }
     putchar('\n');
     //TODO FRAN
-    return 1;
+    return;
 }
 
-int eigthCTF()
+void eigthCTF()
 {
     printf("¿?\n\n\033[40;30mLa respuesta es BUmyYq5XxXGt\033[0m\n");
     char *buff = decrypt(nums, 'A', 21);
     printf("\033[8m%s\033[0m", buff);
     free(buff);
-    return 1;
+    return;
 }
 
-int ninthCTF()
+void ninthCTF()
 {
     printf("Latexme\n\nSi\n\\mathrm{d}y = u^v{\\cdot}(v'{\\cdot}\\ln{(u)}+v{\\cdot}\\frac{u'}{u})\nentonces\ny = \n");
-    return 1;
+    return;
 }
 
-int tenthCTF()
+void tenthCTF()
 {
     char command[1024] = {0};
     char result[1024] = {0};
@@ -291,19 +295,24 @@ int tenthCTF()
     res = popen("gcc quine.c -o quine", "r");
     if (pclose(res) == 0)
     {
-        printf("¡Genial!, ya lograron meter un programa en quine.c, veamos si hacelo que corresponde.");
+        printf("¡Genial!, ya lograron meter un programa en quine.c, veamos si hacelo que corresponde.\n");
         res = popen("./quine | diff - quine.c", "r");
         n = fread(result, sizeof(char), 1024, res);
+        if(n == -1)
+        {
+            perror("fread");
+            exit(EXIT_FAILURE);
+        }
         if (n == 0){
-            printf("La respuesta es chin_chu_lan_cha")
+            printf("La respuesta es chin_chu_lan_cha");
+            pclose(res);
+            return;
         }
         result[n - 1] = 0;
+        pclose(res);
     }
-    else{
-        perror("gcc");
-        return 0;
-    }
-    return 1;
+    printf("Presiona ENTER para reintentar");
+    return;
 }
 
 void gdbme()
@@ -320,14 +329,14 @@ void gdbme()
     }
 }
 
-int eleventhCTF()
+void eleventhCTF()
 {
     printf("b gdbme y encontrá el valor mágico\n\nENTER para reintentar.\n");
     gdbme();
-    return 1;
+    return;
 }
 
-int twelfthCTF()
+void twelfthCTF()
 {
     printf("Me conoces\n\n");
     srand(time(NULL));
@@ -352,5 +361,5 @@ int twelfthCTF()
             n *= -1;
         printf("%g ", n);
     }
-    return 1;
+    return;
 }
