@@ -1,4 +1,4 @@
-#include "random.h"
+#include "include/random.h"
 #include <stdlib.h>
 #include <time.h>
 double randNormalize (void){
