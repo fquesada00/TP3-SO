@@ -3,8 +3,11 @@
 ---------SO-TP3-2Q2020------------
 
 Alumnos:
+
 	* Serpe, Octavio
+	
 	* Quesada, Francisco
+	
 	* Donikian, Gastón
 
 **PARA COMPILAR Y EJECUTAR EN LINUX**
