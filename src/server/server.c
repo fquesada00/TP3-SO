@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -23,6 +25,7 @@ char easy[] = "too_easy";
 
 int main(int argc, char const *argv[])
 {
+    randomize();
     int server_fd, client_fd;
     int opt = 1;
     struct sockaddr_in *address = malloc(sizeof(struct sockaddr_in));
@@ -57,14 +60,11 @@ int main(int argc, char const *argv[])
         perror("accept");
         exit(EXIT_FAILURE);
     }
-    int ctfs = 0;
-    while (ctfs < CTFS)
-    {
-        generalCTF(client_fd, hashes[ctfs], challenges[ctfs], questions[ctfs]);
-        ctfs++;
-    }
+    generalCTF(client_fd);
     printf("\n\nFelicitaciones, finalizaron el juego. Ahora deberán implementar el servidor que se comporte como el servidor provisto");
     printf("\033[1;1H\033[2J");
+    close(server_fd);
+    close(client_fd);
     free(address);
     return 0;
 }
@@ -93,39 +93,49 @@ int checkGivenAnswer(char *hash, char *givenAnswer)
     return 1;
 }
 
-int generalCTF(int client_fd, char *hash, int (*challenge)(), char *question)
+int generalCTF(int client_fd)
 {
     char ok = 0;
-    char *response;
-    size_t n;
-    FILE *client_file = fdopen(client_fd, "r");
+    char *response = NULL;
+    int ctfs = 0;
+    size_t n = 0;
+    int aux = dup(client_fd);
+    FILE *client_file = fdopen(aux, "r");
     if (client_file == NULL)
     {
         perror("fdopen");
         exit(EXIT_FAILURE);
     }
-    do
+    void (*challenge)();
+    while (ctfs < CTFS)
     {
-        printf("\033[1;1H\033[2J");
-        printf("------------- DESAFIO -------------\n");
-        challenge();
-        printf("\n\n----- PREGUNTA PARA INVESTIGAR -----\n");
-        printf("%s\n", question);
-        if (getline(&response, &n, client_file) == -1)
+        challenge = (void (*)())challenges[ctfs];
+        do
         {
-            free(response);
-            perror("getline");
-            exit(EXIT_FAILURE);
-        }
-        if (strcmp(response, "ositOS\n") == 0)
-        {
-            ositoCarinoso();
-        }
-        else
-        {
-            ok = checkGivenAnswer(hash, response);
-        }
-
-    } while (!ok);
+            printf("\033[1;1H\033[2J");
+            printf("------------- DESAFIO -------------\n");
+            challenge();
+            printf("\n\n----- PREGUNTA PARA INVESTIGAR -----\n");
+            printf("%s\n", questions[ctfs]);
+            if (getline(&response, &n, client_file) == -1)
+            {
+                free(response);
+                perror("getline");
+                exit(EXIT_FAILURE);
+            }
+            if (strcmp(response, "ositOS\n") == 0)
+            {
+                ositoCarinoso();
+            }
+            else
+            {
+                ok = checkGivenAnswer(hashes[ctfs], response);
+            }
+        } while (!ok);
+        ctfs++;
+        ok=0;
+    }
+    free(response);
+    fclose(client_file);
     return 1;
 }

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "lib.h"
 #include <stdio.h>
 #include <sys/socket.h>
@@ -40,7 +42,7 @@ void progressBar()
 {
     char t[22] = {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'};
     t[21] = 0;
-    int i = 0;
+    int i;
     for (int j = 0; j <= 100; j++)
     {
         i = j / 5;

@@ -1,5 +1,5 @@
 GCC=gcc
 ASM=nasm
 
-GCCFLAGS= -Wall
+GCCFLAGS= -Wall -g
 ASMFLAGS= -f elf64

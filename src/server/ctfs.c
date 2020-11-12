@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "ctfs.h"
 #include "random.h"
 #include "lib.h"
@@ -85,22 +87,26 @@ void ninthCTF()
 
 void tenthCTF()
 {
-    char result[1024] = {0};
     int n;
     printf("quine\n");
     FILE *res;
     res = popen("gcc quine.c -o quine", "r");
     if (pclose(res) == 0)
     {
-        printf("¡Genial!, ya lograron meter un programa en quine.c, veamos si hacelo que corresponde.");
+        char result[1024] = {0};
+        printf("¡Genial!, ya lograron meter un programa en quine.c, veamos si hacelo que corresponde.\n");
         res = popen("./quine | diff - quine.c", "r");
         n = fread(result, sizeof(char), 1024, res);
         if (n == 0)
-
-            result[n - 1] = 0;
+        {
+            pclose(res);
+            printf("La respuesta es chin_chu_lan_cha");
+            return;
+        }
+        pclose(res);
     }
-    else
-        perror("gcc");
+    printf("Presiona ENTER para reintentar");
+    return;
 }
 
 void eleventhCTF()
@@ -113,7 +119,7 @@ void twelfthCTF()
 {
     printf("Me conoces\n\n");
     srand(time(NULL));
-    double n = 0.0;
+    double n;
     int sequence = randInt(1, 3);
     for (int i = 0, k; i < 400; i++)
     {

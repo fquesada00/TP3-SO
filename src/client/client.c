@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -13,6 +15,7 @@ int main(int argc, char const *argv[])
 {
     int socket_fd = 0;
     struct sockaddr_in address;
+    int server_fd;
     if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("socket fd");
@@ -25,7 +28,7 @@ int main(int argc, char const *argv[])
         perror("not supported address");
         exit(EXIT_FAILURE);
     }
-    if (connect(socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+    if ((server_fd =connect(socket_fd, (struct sockaddr *)&address, sizeof(address))) < 0)
     {
         perror("connect");
         exit(EXIT_FAILURE);
@@ -38,5 +41,7 @@ int main(int argc, char const *argv[])
         ctfs++;
         sleep(1);
     }
+    close(socket_fd);
+    close(server_fd);
     return 0;
 }
