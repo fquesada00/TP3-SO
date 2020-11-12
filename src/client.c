@@ -11,10 +11,8 @@
 
 int main(int argc, char const *argv[])
 {
-    int socket_fd = 0, valread, opt = 1;
+    int socket_fd = 0;
     struct sockaddr_in address;
-    char *hello = "Hello from client";
-    char buffer[1024] = {0};
     if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("socket fd");
@@ -40,15 +38,5 @@ int main(int argc, char const *argv[])
         ctfs++;
         sleep(1);
     }
-    //test_connection(socket_fd);
     return 0;
-}
-
-void test_connection(int socket_fd)
-{
-    char buffer[1024] = {0};
-    send(socket_fd, "Hello from client", strlen("Hello from cliente"), 0);
-    printf("Hello message sent\n");
-    read(socket_fd, buffer, 1024);
-    printf("%s\n", buffer);
 }

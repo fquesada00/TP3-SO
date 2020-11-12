@@ -1,15 +1,15 @@
 #ifndef _CTFS_H_
 #define _CTFS_H_
-int firstCTF();
-int secondCTF();
-int thirdCTF();
-int forthCTF();
-int fifthCTF();
-int sixthCTF();
-int seventhCTF();
-int eigthCTF();
-int ninthCTF();
-int tenthCTF();
-int eleventhCTF();
-int twelfthCTF();
+void firstCTF();
+void secondCTF();
+void thirdCTF();
+void forthCTF();
+void fifthCTF();
+void sixthCTF();
+void seventhCTF();
+void eigthCTF();
+void ninthCTF();
+void tenthCTF();
+void eleventhCTF();
+void twelfthCTF();
 #endif

@@ -1,4 +1,4 @@
-#include "include/lib.h"
+#include "lib.h"
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
