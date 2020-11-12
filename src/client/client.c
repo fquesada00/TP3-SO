@@ -38,15 +38,5 @@ int main(int argc, char const *argv[])
         ctfs++;
         sleep(1);
     }
-    //test_connection(socket_fd);
     return 0;
-}
-
-void test_connection(int socket_fd)
-{
-    char buffer[1024] = {0};
-    send(socket_fd, "Hello from client", strlen("Hello from cliente"), 0);
-    printf("Hello message sent\n");
-    read(socket_fd, buffer, 1024);
-    printf("%s\n", buffer);
 }

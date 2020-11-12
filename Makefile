@@ -17,7 +17,7 @@ client:
 
 server: asm
 	@echo "Creating files for server"
-	@$(GCC) $(GCCFLAGS) $(SOURCES_SERVER) $(OBJECTS_ASM) -o server
+	@$(GCC) $(GCCFLAGS) -I./src/include $(SOURCES_SERVER) $(OBJECTS_ASM) -o server
 
 clean:
 	@echo "Deleting objects"
