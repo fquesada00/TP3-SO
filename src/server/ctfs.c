@@ -118,7 +118,7 @@ void eleventhCTF()
 void twelfthCTF()
 {
     printf("Me conoces\n\n");
-    srand(time(NULL));
+    randomize();
     double n;
     int sequence = randInt(1, 3);
     for (int i = 0, k; i < 400; i++)

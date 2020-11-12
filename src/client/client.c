@@ -28,19 +28,39 @@ int main(int argc, char const *argv[])
         perror("not supported address");
         exit(EXIT_FAILURE);
     }
-    if ((server_fd =connect(socket_fd, (struct sockaddr *)&address, sizeof(address))) < 0)
+    if ((server_fd = connect(socket_fd, (struct sockaddr *)&address, sizeof(address))) < 0)
     {
         perror("connect");
         exit(EXIT_FAILURE);
     }
-    int ctfs = 0;
-    char *answers[12] = {"entendido\n", "itba\n", "M4GFKZ289aku\n", "fk3wfLCm3QvS\n", "too_easy\n", ".RUN_ME\n", "K5n2UFfpFMUN\n", "BUmyYq5XxXGt\n", "u^v\n", "chin_chu_lan_cha\n", "gdb_rules\n", "normal\n"};
-    while (ctfs < CTFS)
+    size_t n = 0;
+    char *response = NULL, done = 0;
+    FILE *client_file = fdopen(0, "r");
+    if (client_file == NULL)
     {
-        send(socket_fd, answers[ctfs], strlen(answers[ctfs]),0);
-        ctfs++;
-        sleep(1);
+        perror("fdopen");
+        exit(EXIT_FAILURE);
     }
+    puts("\n\nBienvenidos al cliente de ositOS.\n\nPara mandar input al servidor, escriban el texto con la respuesta que crean correcta y presionen enter.\n\nPara salir del cliente, escriban la palabra \'quit\' seguida de cualquier caracter (o ninguno).\n\n");
+    while (!done)
+    {
+        if (getline(&response, &n, client_file) == -1)
+        {
+            free(response);
+            close(socket_fd);
+            close(server_fd);
+            perror("getline");
+            exit(EXIT_FAILURE);
+        }
+        if (!strncmp(response, "quit",4))
+        {
+            done = 1;
+            continue;
+        }
+        printf("%s\n", response);
+        send(socket_fd, response, strlen(response), 0);
+    }
+    free(response);
     close(socket_fd);
     close(server_fd);
     return 0;

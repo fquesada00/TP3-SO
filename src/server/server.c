@@ -25,7 +25,6 @@ char easy[] = "too_easy";
 
 int main(int argc, char const *argv[])
 {
-    randomize();
     int server_fd, client_fd;
     int opt = 1;
     struct sockaddr_in *address = malloc(sizeof(struct sockaddr_in));
